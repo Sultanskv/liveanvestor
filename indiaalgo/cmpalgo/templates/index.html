@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Option Chain Data</title>
+    <script>
+        async function fetchOptionChainData() {
+            try {
+                const response = await fetch('/fetch_option_chain/');  // Your Django endpoint
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log(data);
+                // Display the data in the HTML element
+                document.getElementById('option-chain-data').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            fetchOptionChainData();
+        });
+    </script>
+</head>
+<body>
+    <h1>Option Chain Data</h1>
+    <pre id="option-chain-data"></pre>
+</body>
+</html>

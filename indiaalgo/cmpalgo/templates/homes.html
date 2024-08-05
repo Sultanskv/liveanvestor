@@ -1,0 +1,364 @@
+{% include 'client_base.html' %}
+{% block main %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trade Overview</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #f0f0f0;
+        }
+        .container.fade-in {
+    position: absolute; /* Keep the container positioned relative to its parent */
+    top: 170px; /* Set a fixed top margin */
+    left: 0; /* Align to the left */
+    right: 0; /* Align to the right */
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-width: 90%; /* Prevent horizontal overflow */
+    height: calc(100% - 50px); /* Adjust height based on the top margin */
+    z-index: 1000; /* Ensure it's above other content if necessary */
+}
+
+/* Additional adjustments for responsiveness */
+@media (max-width: 768px) {
+    .container.fade-in {
+        top: 20px; /* Adjust top position for mobile view if needed */
+        height: calc(100% - 20px); /* Adjust height based on the new top margin */
+    }
+}
+        h1 {
+            margin-bottom: 30px;
+            color: #f0f0f0;
+        }
+        .card {
+            background-color: #000000;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.6);
+            color: #f0f0f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 10px;
+            min-width: 150px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 1);
+        }
+        .card-title {
+            font-size: 1em;
+            color: #FFD700;
+        }
+        .card-text {
+            font-size: 0.9em;
+        }
+        .text-success {
+            color: #00ff00 !important;
+        }
+        .text-danger {
+            color: #ff0019 !important;
+        }
+        .row.no-gutters {
+            margin-right: 0;
+            margin-left: 0;
+            justify-content: space-around;
+        }
+        .iframe-card {
+            width: 100%;
+            height: 400px;
+        }
+        .full-height {
+            height: 100%;
+        }
+        .height {
+            height: 400px;
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        a {
+            color: #FFD700;
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 0;
+                padding-top: 720px;
+            }
+            .card {
+                margin: 10px 0;
+            }
+        }
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            pointer-events: auto;
+            background-color: #000;
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, .2);
+            border-radius: .3rem;
+            outline: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container fade-in">
+    <div class="row no-gutters">
+        <div class="col-auto">
+            <div class="card small-card">
+                <div class="card-body">
+                    <h5 class="card-title">Account Funds</h5>
+                    <p class="card-text">Available Funds: <span class="{% if funds >= 0 %}text-success{% else %}text-danger{% endif %}">{{ funds }}</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="card small-card">
+                <div class="card-body">
+                    <h5 class="card-title">Trade Counts</h5>
+                    <p class="card-text">Profitable Trades: <span class="text-success">{{ profitable_trades }}</span></p>
+                    <p class="card-text">Loss Trades: <span class="text-danger">{{ loss_trades }}</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="card small-card">
+                <div class="card-body">
+                    <h5 class="card-title">Total P&L</h5>
+                    <p class="card-text">Cumulative P&L: <span class="{% if total_cumulative_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">{{ total_cumulative_pnl }}</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="card small-card">
+                <div class="card-body">
+                    <h5 class="card-title">Trade Accuracy</h5>
+                    <p class="card-text">Accuracy: <span class="{% if trade_accuracy >= 50 %}text-success{% else %}text-danger{% endif %}">{{ trade_accuracy }}%</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters">
+        <div class="col-lg-4 col-md-12">
+            <div class="card mb-2 height">
+                <div class="card-body">
+                    <!-- TradingView Widget BEGIN -->
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <div class="tradingview-widget-copyright">
+                            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                                <span class="blue-text"></span>
+                            </a>
+                        </div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                        {
+                        "feedMode": "all_symbols",
+                        "isTransparent": false,
+                        "displayMode": "regular",
+                        "width": "100%",
+                        "height": "100%",
+                        "colorTheme": "dark",
+                        "locale": "en"
+                        }
+                        </script>
+                    </div>
+                    <!-- TradingView Widget END -->
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-12">
+            <div class="card mb-2 height">
+                <div class="card-body">
+                    <div class="tradingview-widget-container iframe-card">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <div class="tradingview-widget-copyright">
+                            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                                <span class="blue-text"></span>
+                            </a>
+                        </div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                        {
+                        "autosize": true,
+                        "symbol": "BSE:SENSEX",
+                        "timezone": "Etc/UTC",
+                        "theme": "dark",
+                        "style": "1",
+                        "locale": "en",
+                        "withdateranges": true,
+                        "range": "YTD",
+                        "hide_side_toolbar": false,
+                        "allow_symbol_change": true,
+                        "watchlist": [
+                            "SP:SPX",
+                            "CAPITALCOM:DXY",
+                            "OANDA:XAUUSD",
+                            "TVC:USOIL"
+                        ],
+                        "details": true,
+                        "hotlist": true,
+                        "calendar": false,
+                        "support_host": "https://www.tradingview.com"
+                        }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="resetPasswordModalClose">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsAndConditionsModal" tabindex="-1" role="dialog" aria-labelledby="termsAndConditionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsAndConditionsModalLabel">Terms and Conditions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 10px;">Dear {{ client_user.clint_name_first }}
+
+                    All subscription fees paid to 'Anvestors.com' is Non refundable. We do not provide trading tips not we are investment adviser. Our service is solely restricted to automated trading application development, deployment and maintenance. All algorithms are based on backtested data but we do not provide any guarantee for their performance in future. The algorithm running in an automated system is agreed with the user prior deployment and we do not take any liability for any loss generated by the same. Past performance of advise/strategy/model does not indicate the future performance of any current or future strategy/model or advise by 'Anvestors.com' Trades and actual returns may differ significantly from that depicted herein due to various factors including but not limited to impact costs, expense charged, timing of entry/exit, timing of additional flows/redemptions, individual client mandates, specific portfolio construction characteristics etc. There is no assurance or guarantee that the objectives of any strategy/model or advice provided by 'Anvestors.com' Trades will be achieved. 'Anvestors.com' Trades or any of its partner/s or principal officer/employees do not assure/give guarantee for any return on the investment in strategies/models/advice given to the Investor. The value of investment can go up/down depending on factors & forces affecting securities markets 'Anvestors.com' Trades or its associates are not liable or responsible for any loss or shortfall arising from operations and affected by the market condition.
+                    
+                    Assuring you of our best services at all times
+                    Best regards.</p>
+                <input type="checkbox" id="acceptTerms"> I accept the terms and conditions
+            </div>
+            <div class="modal-footer">
+                <button id="acceptTermsButton" class="btn btn-primary" disabled>Accept Terms and Conditions</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Include Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Include native JavaScript for AJAX -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var termCondition = '{{ term_condition }}';
+            var resetPasswordModal = document.getElementById('resetPasswordModal');
+            var termsAndConditionsModal = document.getElementById('termsAndConditionsModal');
+
+            if (termCondition === 'False') {
+                $(resetPasswordModal).modal('show');
+            }
+
+            document.getElementById('resetPasswordForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                var newPassword = document.getElementById('new_password').value;
+                var confirmPassword = document.getElementById('confirm_password').value;
+
+                if (newPassword !== confirmPassword) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+
+                fetch('{% url "reset_password" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'new_password': newPassword
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $(resetPasswordModal).modal('hide');
+                        $(termsAndConditionsModal).modal('show');
+                    } else {
+                        alert('Failed to reset password.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while resetting the password.');
+                });
+            });
+
+            document.getElementById('acceptTerms').addEventListener('change', function() {
+                document.getElementById('acceptTermsButton').disabled = !this.checked;
+            });
+
+            document.getElementById('acceptTermsButton').addEventListener('click', function() {
+                fetch('{% url "accept_terms" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $(termsAndConditionsModal).modal('hide');
+                    } else {
+                        alert('Failed to accept terms and conditions.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while accepting the terms and conditions.');
+                });
+            });
+        });
+    </script>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}

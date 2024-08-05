@@ -1,0 +1,62 @@
+{% extends 'subadmin_base.html' %}
+
+{% block title %}API Create Information{% endblock title %}
+
+{% block main %}
+<style>
+  
+    .card {
+        margin: 20px;
+        border-color: #007bff;
+    }
+    .card-header {
+        background-color: #007bff;
+        color: white;
+    }
+    .highlight {
+        color: red;
+    }
+    .btn-custom {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Angel API Create Information</h3>
+            </div>
+            <div class="card-body">
+                <h5>API Process of Angel:</h5>
+                <p>Kindly follow these steps to link your demat account with this Algo Software.</p>
+                
+                <h6>Step 1:</h6>
+                <ol>
+                    <li>Click below link and Login <a href="http://smartapi.angelbroking.com" target="_blank">http://smartapi.angelbroking.com</a></li>
+                </ol>
+                <p><img src="https://seupload.com/cache/plugins/filepreviewer/126834/098890467bd8d44b66ae99652266003a59f11f874e93fa383cca6537fc4192fa/1100x800_cropped.jpg" class="img-fluid" alt="Step 1 Image"></p>
+                <p><span class="highlight">API KEY</span> <span class="highlight">Secret Key</span></p>
+                <button class="btn btn-custom">Create an App</button>
+                
+                <h6>Step 2:</h6>
+                <p>Enter your Details and the Redirect URL, which is given below.</p>
+                <p>Redirect URL (optional): <span class="highlight">your_panel_email@gmail.com</span></p>
+                <p>Post back URL (optional): <span class="highlight">3098@angelbroking/access_token?email=your_email</span></p>
+                <p>Angel Client ID (optional): <span class="highlight">R12345</span></p>
+
+                <h6>Step 3:</h6>
+                <p>Create API</p>
+                <p>API Key and Secret Key will be generated. Please update them on your Profile in this software.</p>
+                <p><span class="highlight">API KEY</span> <span class="highlight">Secret Key</span></p>
+
+                <p><span class="highlight">NOTE:</span> Please remember to use the email ID registered on client panel at the place of "<span class="highlight">YOUR_PANEL_EMAIL</span>".</p>
+            </div>
+        </div>
+    </div>
+
+    <br></br>
+
+    {% endblock %}  
+    
+

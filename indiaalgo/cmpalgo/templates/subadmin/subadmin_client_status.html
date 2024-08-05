@@ -1,0 +1,135 @@
+{% extends "subadmin/subadmin_base.html" %} 
+
+{% block main %}
+
+<style>
+    body {
+font-family: Arial, sans-serif;
+background-color: #f2f2f2;
+margin: 0;
+padding: 0;
+}
+
+.container {
+width: 90%;
+margin: auto;
+background-color: #fff;
+padding: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+margin-top: 50px;
+}
+
+header {
+background-color: #ff9d43;
+padding: 10px;
+border-top-left-radius: 8px;
+border-top-right-radius: 8px;
+}
+
+header h1 {
+margin: 0;
+color: #fff;
+}
+
+.search-bar {
+margin: 20px 0;
+}
+
+.search-bar input {
+width: 99%;
+padding: 10px;
+border-radius: 5px;
+border: 1px solid #ccc;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+}
+
+thead {
+background-color: #000;
+color: #fff;
+}
+
+th, td {
+padding: 10px;
+text-align: left;
+}
+
+tr:nth-child(even) {
+background-color: #f2f2f2;
+}
+
+.pagination {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 20px;
+}
+
+.pagination select, .pagination button {
+padding: 5px 10px;
+margin: 0 5px;
+}
+
+</style>    
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>SubAdmin Client Trading Status</h1>
+    </header>
+    <div class="search-bar">
+        <input type="text" placeholder="Filter Table">
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Service Name</th>
+                <th>Quantity</th>
+                <th>Strategy</th>
+                <th>Trading</th>
+                <th>IP Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in client %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{c.clint_name_first}}</td>
+                <td>{{c.login_date_time}}</td>
+                <td>{{c.service_name}}</td>
+                <td>-</td>
+                <td>-</td>
+                {% if c.clint_plane == 'Live' %}
+                    <td style="color: green;">API ON</td>
+                {% else %}   
+                    <td style="color:red;">API OFF</td> 
+                {% endif %}    
+                <td>{{c.ip_address}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        <span>Rows per page: </span>
+        <select>
+            <option>10</option>
+            <option>20</option>
+            <option>30</option>
+        </select>
+        <span>1-1 of 1</span>
+        <button>&lt;</button>
+        <button>&gt;</button>  
+    </div>
+</div>
+</body>
+
+
+{% endblock %}

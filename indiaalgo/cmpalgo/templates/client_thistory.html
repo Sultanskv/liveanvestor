@@ -1,0 +1,189 @@
+{% comment %} {% extends 'client_base.html' %}
+
+{% block main %}
+<script>
+  new DataTable('#example', {
+    layout: {
+        topStart: {
+            buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
+        }
+    }
+});
+</script>  
+<style>
+  .positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}
+
+</style>
+ 
+<div class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Trade History</h4>
+          </div>
+          <div class="card-body">
+            {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+              {{ error_message }}
+            </div>
+            {% endif %}
+            <div class="table-responsive table-container">
+              <table class="table tablesorter table-bordered" id="example">
+                <thead class="text-black bg-black">
+                  <tr>
+                    <th>Signal</th>
+                    <th style="width: 200px;">Signal Time</th>
+                    <th>SYMBOL</th>
+                    <th>STRAT</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Entry Price</th>
+                    <th>Exit Price</th>
+                    <th>P & L</th>
+                    <th>Cumulative P & L</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for signal in s %}
+                    <tr>
+                      <td>{{ signal.id }}</td>
+                      <td style="width: 200px;">{{ signal.created_at|default:"-" }}</td>
+                      <td>{{ signal.SYMBOL |default:"-" }}</td>
+                      <td>{{ signal.STRAT|default:"-" }}</td>
+                      <td>{{ signal.TYPE|default:"-" }}</td>
+                      <td>{{ signal.QUANTITY |default:"-" }}</td>
+                      {% if signal.TYPE == "BUY_EXIT" %}
+                        <td>-</td> <!-- If it's BUY_EXIT, show a hyphen -->
+                      {% else %}
+                        <td>{{ signal.ENTRY_PRICE |default:"-" }}</td> <!-- Otherwise, show ENTRY_PRICE -->
+                      {% endif %}
+   
+                      <td>{{ signal.EXIT_PRICE|default:"-" }}</td>
+
+                      {% if signal.profit_loss == "0"%}
+                        <td>-</td>
+                      {% else %}  
+                        <td class="{% if signal.profit_loss < 0 %}negative{% elif signal.profit_loss > 0 %}positive{% endif %}">
+                          {{ signal.profit_loss|default:"-" }}
+                          {% if signal.profit_loss != None and signal.profit_loss != "-" %}
+                              <span>$</span>
+                          {% endif %}
+                        </td>
+                    
+                      {% endif %}
+
+                      {% if signal.cumulative_pl == "0" %}
+                        <td>-</td>
+                      {% else %}  
+                        <td class="{% if signal.cumulative_pl <= 0 %}negative{% elif signal.cumulative_pl >= 0 %}positive{% endif %}">
+                          {{ signal.cumulative_pl|default:"-" }}
+                          {% if signal.cumulative_pl != None and signal.cumulative_pl != "-" %}
+                              <span>$</span>
+                          {% endif %}
+                      </td>
+                      
+                        {% endif %}
+                      
+                  </tr>
+                  {% endfor %}
+                  <tr>
+                    <td colspan="8" style="text-align: right; font-weight: bold;">Total cumulative_pl:</td>
+                    <td class="{% if total_cumulative_pl <= 0 %}negative{% elif total_cumulative_pl >= 0 %}positive{% endif %}"><span style="font-weight: bold;">{{ total_cumulative_pl|floatformat:"-2" |default:"0" }}<span>$</span></span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %} {% endcomment %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Status</title>
+</head>
+<body>
+    <h1>Order Status</h1>
+    <form id="order-form">
+        <label for="order-id">Order ID:</label>
+        <input type="text" id="order-id" name="order-id" required>
+        <button type="submit">Fetch Status</button>
+    </form>
+    <table border="1" id="order-status-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Symbol</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Update Time</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Fetched order data will be displayed here -->
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('order-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const orderId = document.getElementById('order-id').value;
+            fetchOrderStatus(orderId);
+        });
+
+        function fetchOrderStatus(orderId) {
+            const url = `https://apiconnect.angelbroking.com/rest/secure/angelbroking/order/v1/details/${orderId}`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add your authorization headers here
+                    'Authorization': 'Bearer {API_KEY}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    displayOrderStatus(data.data);
+                } else {
+                    console.error('Error fetching order status:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function displayOrderStatus(orderData) {
+            const tableBody = document.getElementById('order-status-table').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            const row = tableBody.insertRow();
+            row.insertCell(0).textContent = orderData.orderid;
+            row.insertCell(1).textContent = orderData.tradingsymbol;
+            row.insertCell(2).textContent = orderData.quantity;
+            row.insertCell(3).textContent = orderData.price;
+            row.insertCell(4).textContent = orderData.status;
+            row.insertCell(5).textContent = orderData.updatetime;
+            row.insertCell(6).textContent = orderData.text;
+        }
+    </script>
+</body>
+</html>
+

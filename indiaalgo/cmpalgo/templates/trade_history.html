@@ -1,0 +1,145 @@
+{% extends 'client_base.html' %}
+{% block main %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trade History</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000; /* Black background */
+            color: #FFD700; /* Gold text */
+        }
+        .card {
+            word-wrap: break-word;
+            background-color: #000;
+            border: 1px solid #FFD700; /* Gold border */
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3); /* Gold shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.5); /* Gold shadow on hover */
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .table {
+            margin-top: 20px;
+            color: #FFD700; /* Gold text */
+        }
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+            background-color: #000; /* Black background */
+        }
+        .thead-dark th {
+            background-color: #333; /* Dark background for table headers */
+            color: #FFD700; /* Gold text for headers */
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #111; /* Dark grey for odd rows */
+        }
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #222; /* Slightly lighter grey for even rows */
+        }
+        .table-bordered {
+            border: 1px solid #FFD700; /* Gold border */
+        }
+        h1 {
+            margin-bottom: 30px;
+            color: #FFD700; /* Gold color for headings */
+        }
+        h3 {
+            margin-top: 20px;
+            color: #FFD700; /* Gold color for subheadings */
+        }
+        @media (max-width: 768px) {
+            h1, h3 {
+                text-align: center;
+            }
+        }
+        @media (min-width: 992px) {
+            .container {
+                max-width: 1400px;
+            }
+        }
+        .text-center {
+            text-align: right !important;
+        }
+        .text-right {
+            text-align: center !important;
+        }
+        .text-success {
+            color: #FFD700 !important; /* Gold text for positive P&L */
+        }
+        .text-danger {
+            color: #ff0019 !important; /* Red text for negative P&L */
+        }
+        .fade-in {
+            animation: fadeIn 2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .glow {
+            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFD700;
+        }
+        .white-text {
+            color: #FFFFFF !important; /* White text */
+        }
+        a {
+  color: #FFD700;
+  text-decoration: none;
+  background-color: transparent;
+}
+    </style>
+</head>
+<body>
+<div class="container fade-in">
+    <h1 class="text-right glow">P&L Account</h1>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Signal</th>
+                    <th>Signal Time</th>
+                    <th>Symbol</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Entry Price</th>
+                    <th>Exit Price</th>
+                    <th>P & L</th>
+                    <th>Cumulative P & L</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for trade in trade_history %}
+                <tr>
+                    <td class="white-text">{{ trade.signal }}</td>
+                    <td class="white-text">{{ trade.signal_time }}</td>
+                    <td class="white-text">{{ trade.symbol }}</td>
+                    <td class="white-text">{{ trade.type }}</td>
+                    <td class="white-text">{{ trade.quantity }}</td>
+                    <td class="white-text">{{ trade.entry_price }}</td>
+                    <td class="white-text">{{ trade.exit_price }}</td>
+                    <td class="{% if trade.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">{{ trade.pnl }}</td>
+                    <td class="{% if trade.cumulative_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if trade.type == 'Long_Entry' or trade.type == 'Short_Entry' %}-{% else %}{{ trade.cumulative_pnl }}{% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h3 class="text-center glow">Total cumulative P&L: <span class="{% if total_cumulative_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">{{ total_cumulative_pnl }}</span></h3>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}

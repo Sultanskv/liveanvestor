@@ -1,0 +1,164 @@
+{% extends 'client_base.html' %}
+
+{% block main %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000; /* Set background to black */
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        margin: 20px auto;
+        width: 90%;
+        background: #000000; /* Darker black background for contrast */
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3); /* Gold shadow */
+        overflow-x: auto;
+    }
+
+    header {
+        background-color: #0c0c0c; /* Golden color */
+        padding: 10px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    header h1 {
+        margin: 0;
+        color: #bfa240;
+    }
+
+    .search-bar {
+        margin: 20px 0;
+    }
+
+    .search-bar input {
+        width: 99%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #444;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        background-color: #333;
+        color: #fff;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background-color: #bfa240; /* Golden color */
+        color: #000;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    tr:nth-child(even) {
+        background-color: #333; /* Darker row background */
+    }
+
+    tr {
+        background-color: #111; /* Base row background */
+        color: #fff;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination select, .pagination button {
+        padding: 5px 10px;
+        margin: 0 5px;
+        background-color: #444; /* Darker buttons */
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .pagination select {
+        background-color: #bfa240; /* Golden dropdown */
+    }
+</style>
+
+<div class="container">
+    <header>
+        <h1>Trading Status</h1>
+    </header>
+    <div class="search-bar">
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Service Name</th>
+                <th>Quantity</th>
+                <th>Strategy</th>
+                <th>Trading</th>
+                <th>IP Address</th>
+                <th>UPDATED BY</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in client %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{c.clint_name_first}}</td>
+                <td>{{c.login_date_time}}</td>
+                <td>{{c.service_name}}</td>
+                <td>{{client_symbol_qty.QUANTITY}}</td>
+                <td>{{c.strategies}}</td>
+                {% if c.clint_plane == 'Live' %}
+                    <td style="color: #bfa240;">Panel ON</td> <!-- Golden color for live status -->
+                {% else %}
+                    <td style="color:red;">Panel OFF</td>
+                {% endif %}
+                <td>{{c.ip_address}}</td>
+                <td>{{ c.updated_by }}</td>
+            </tr>
+            {% endfor %}
+
+            {% for c in st %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{c.name}}</td>
+                <td>{{c.time}}</td>
+                <td>{{c.service_name}}</td>
+                <td>{{c.quantity}}</td>
+                <td>{{c.strategy}}</td>
+                {% if c.trading == 'Live' %}
+                    <td style="color: #bfa240;">Panel ON</td> <!-- Golden color for live status -->
+                {% else %}
+                    <td style="color:red;">Panel OFF</td>
+                {% endif %}
+                <td>{{c.ip_address}}</td>
+                <td>{{ c.updated_by }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        <span>Rows per page: </span>
+        <select>
+            <option>10</option>
+            <option>20</option>
+            <option>30</option>
+        </select>
+        <span>1-1 of 1</span>
+        <button>&lt;</button>
+        <button>&gt;</button>
+    </div>
+</div>
+{% endblock %}

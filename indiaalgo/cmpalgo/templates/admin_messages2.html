@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Messages</title>
+</head>
+<body>
+    <h1>Admin Messages</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="symbol">Symbol:</label>
+        <select name="symbol" id="symbol">
+            {% for symbol in symbols %}
+            <option value="{{ symbol.SYMBOL }}">{{ symbol.SYMBOL }}</option>
+            {% endfor %}
+        </select>
+        <label for="type">Type:</label>
+        <select name="type" id="type">
+            <option value="BUY_ENTRY">BUY_ENTRY</option>
+            <option value="SELL_ENTRY">SELL_ENTRY</option>
+            <!-- Add more options if needed -->
+        </select>
+        <label for="quantity">Quantity:</label>
+        <input type="text" name="quantity" id="quantity">
+        <label for="entry_price">Entry Price:</label>
+        <input type="text" name="entry_price" id="entry_price">
+        <label for="exit_price">Exit Price:</label>
+        <input type="text" name="exit_price" id="exit_price">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!-- templates/place_order.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Place Order</title>
+    <script>
+        function fetchSymbolToken() {
+            var symbol = document.getElementById('tradingsymbol').value;
+            fetch(`/fetch-symbol-token/${symbol}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.symboltoken) {
+                        document.getElementById('symboltoken').value = data.symboltoken;
+                        fetchTriggerPrice(data.symboltoken);
+                    } else {
+                        alert('Failed to fetch symbol token');
+                    }
+                });
+        }
+
+        function fetchTriggerPrice(symboltoken) {
+            fetch(`/fetch-trigger-price/${symboltoken}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.triggerprice) {
+                        document.getElementById('triggerprice').value = data.triggerprice;
+                    } else {
+                        alert('Failed to fetch trigger price');
+                    }
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Place Order</h1>
+    <form action="{% url 'place_order_view' %}" method="post">
+        {% csrf_token %}
+        
+        <label for="transactiontype">Transaction Type:</label>
+        <select id="transactiontype" name="transactiontype">
+            <option value="BUY">Buy</option>
+            <option value="SELL">Sell</option>
+        </select><br><br>
+
+        <label for="ordertype">Order Type:</label>
+        <select id="ordertype" name="ordertype">
+            <option value="MARKET">Market Order (MKT)</option>
+            <option value="LIMIT">Limit Order (L)</option>
+            <option value="STOPLOSS_LIMIT">Stop Loss Limit Order (SL)</option>
+            <option value="STOPLOSS_MARKET">Stop Loss Market Order (SL-M)</option>
+        </select><br><br>
+
+        <label for="producttype">Product Type:</label>
+        <select id="producttype" name="producttype">
+            <option value="DELIVERY">Cash & Carry for equity (CNC)</option>
+            <option value="CARRYFORWARD">Normal for futures and options (NRML)</option>
+            <option value="MARGIN">Margin Delivery</option>
+            <option value="INTRADAY">Margin Intraday Squareoff (MIS)</option>
+            <option value="BO">Bracket Order (Only for ROBO)</option>
+        </select><br><br>
+
+        <label for="duration">Duration:</label>
+        <select id="duration" name="duration">
+            <option value="DAY">Regular Order</option>
+            <option value="IOC">Immediate or Cancel</option>
+        </select><br><br>
+
+        <label for="exchange">Exchange:</label>
+        <select id="exchange" name="exchange">
+            <option value="BSE">BSE Equity</option>
+            <option value="NSE">NSE Equity</option>
+            <option value="NFO">NSE Future and Options</option>
+            <option value="MCX">MCX Commodity</option>
+            <option value="BFO">BSE Futures and Options</option>
+            <option value="CDS">Currency Derivate Segment</option>
+        </select><br><br>
+
+        <label for="tradingsymbol">Trading Symbol:</label>
+        <input type="text" id="tradingsymbol" name="tradingsymbol" onblur="fetchSymbolToken()" required><br><br>
+
+        <label for="symboltoken">Symbol Token:</label>
+        <input type="text" id="symboltoken" name="symboltoken" readonly><br><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br><br>
+
+        <label for="price">Price:</label>
+        <input type="number" step="0.01" id="price" name="price"><br><br>
+
+        <label for="triggerprice">Trigger Price:</label>
+        <input type="number" step="0.01" id="triggerprice" name="triggerprice" readonly><br><br>
+
+        <label for="squareoff">Square Off:</label>
+        <input type="number" step="0.01" id="squareoff" name="squareoff"><br><br>
+
+        <label for="stoploss">Stop Loss:</label>
+        <input type="number" step="0.01" id="stoploss" name="stoploss"><br><br>
+
+        <label for="trailingStopLoss">Trailing Stop Loss:</label>
+        <input type="number" step="0.01" id="trailingStopLoss" name="trailingStopLoss"><br><br>
+
+        <label for="disclosedquantity">Disclosed Quantity:</label>
+        <input type="number" id="disclosedquantity" name="disclosedquantity"><br><br>
+
+        <label for="ordertag">Order Tag:</label>
+        <input type="text" id="ordertag" name="ordertag"><br><br>
+
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>

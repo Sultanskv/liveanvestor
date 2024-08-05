@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order</title>
+    <script>
+        async function placeOrder(event) {
+            event.preventDefault();
+
+            const apiKey = document.getElementById('api_key').value;
+            const clientId = document.getElementById('client_id').value;
+            const password = document.getElementById('password').value;
+            const secretKey = document.getElementById('secret_key').value;
+            const orderParams = {
+                variety: document.getElementById('variety').value,
+                tradingsymbol: document.getElementById('tradingsymbol').value,
+                symboltoken: document.getElementById('symboltoken').value,
+                transactiontype: document.getElementById('transactiontype').value,
+                exchange: document.getElementById('exchange').value,
+                ordertype: document.getElementById('ordertype').value,
+                producttype: document.getElementById('producttype').value,
+                duration: document.getElementById('duration').value,
+                price: document.getElementById('price').value,
+                squareoff: document.getElementById('squareoff').value,
+                stoploss: document.getElementById('stoploss').value,
+                quantity: document.getElementById('quantity').value
+            };
+
+            const response = await fetch('/place_order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    api_key: apiKey,
+                    client_id: clientId,
+                    password: password,
+                    secret_key: secretKey,
+                    order_params: orderParams
+                })
+            });
+
+            const result = await response.json();
+            console.log(result);
+            document.getElementById('result').innerText = JSON.stringify(result);
+        }
+    </script>
+</head>
+<body>
+    <form onsubmit="placeOrder(event)">
+        {% csrf_token %}
+        <label for="api_key">API Key:</label>
+        <input type="text" id="api_key" name="api_key"><br>
+
+        <label for="client_id">Client ID:</label>
+        <input type="text" id="client_id" name="client_id"><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br>
+
+        <label for="secret_key">Secret Key:</label>
+        <input type="text" id="secret_key" name="secret_key"><br>
+
+        <label for="variety">Variety:</label>
+        <input type="text" id="variety" name="variety"><br>
+
+        <label for="tradingsymbol">Trading Symbol:</label>
+        <input type="text" id="tradingsymbol" name="tradingsymbol"><br>
+
+        <label for="symboltoken">Symbol Token:</label>
+        <input type="text" id="symboltoken" name="symboltoken"><br>
+
+        <label for="transactiontype">Transaction Type:</label>
+        <input type="text" id="transactiontype" name="transactiontype"><br>
+
+        <label for="exchange">Exchange:</label>
+        <input type="text" id="exchange" name="exchange"><br>
+
+        <label for="ordertype">Order Type:</label>
+        <input type="text" id="ordertype" name="ordertype"><br>
+
+        <label for="producttype">Product Type:</label>
+        <input type="text" id="producttype" name="producttype"><br>
+
+        <label for="duration">Duration:</label>
+        <input type="text" id="duration" name="duration"><br>
+
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price"><br>
+
+        <label for="squareoff">Square Off:</label>
+        <input type="text" id="squareoff" name="squareoff"><br>
+
+        <label for="stoploss">Stop Loss:</label>
+        <input type="text" id="stoploss" name="stoploss"><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="text" id="quantity" name="quantity"><br>
+
+        <button type="submit">Place Order</button>
+    </form>
+
+    <pre id="result"></pre>
+</body>
+</html>
+  

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Message</title>
+</head>
+<body>
+    <h1>Send Message to Clients</h1>
+    <form method="post" action="{% url 'send_message_to_all_clients' %}">
+        {% csrf_token %}
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
+        <button type="submit">Send Message</button>
+    </form>
+</body>
+</html>

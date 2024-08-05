@@ -1,0 +1,259 @@
+
+{% extends 'client_base.html' %}
+{% block main %}
+<style>
+    .dashboard-container {
+        padding: 20px;
+        background: linear-gradient(135deg, #1e3c72, #2a5298); /* Blue gradient background */
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #fff; /* White text */
+    }
+    
+    .dashboard-container h3 {
+        margin-bottom: 20px;
+        color: #ffffff; /* White */
+    }
+    
+    .table-responsive {
+        margin-top: 20px;
+    }
+    
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #fff; /* White text */
+    }
+    
+    .table-bordered {
+        border: 1px solid #fff; /* White border */
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #fff; /* White border */
+    }
+    
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #fff; /* White border */
+        background-color: #1e3c72; /* Dark blue background */
+        color: #fff; /* White text */
+        text-align: center;
+    }
+    
+    .table tbody + tbody {
+        border-top: 2px solid #fff; /* White border */
+    }
+    
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #fff; /* White border */
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.1); /* Light white hover effect */
+    }
+    
+    .form-control {
+        display: block;
+        width: 100%;
+        height: calc(2.25rem + 2px);
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #333; /* Dark gray text */
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .custom-select {
+        display: inline-block;
+        width: 100%;
+        height: calc(2.25rem + 2px);
+        padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+        line-height: 1.5;
+        color: #333; /* Dark gray text */
+        vertical-align: middle;
+        background: #fff url(data:image/svg+xml;charset=utf8,%3Csvgxmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='none' stroke='%231e3c72' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E) no-repeat right 0.75rem center;
+        background-size: 8px 10px;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        appearance: none;
+    }
+    
+    .btn-primary {
+        color: #fff; /* White text */
+        background-color: #1e3c72; /* Dark blue background */
+        border-color: #1e3c72; /* Dark blue border */
+    }
+    
+    .btn-primary:hover {
+        color: #fff; /* White text */
+        background-color: #2a5298; /* Slightly lighter blue on hover */
+        border-color: #2a5298;
+    }
+    
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 34px;
+        height: 20px;
+    }
+    
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: #1e3c72; /* Dark blue */
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(14px);
+    }
+    
+    .slider.round {
+        border-radius: 34px;
+    }
+    
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+<div class="dashboard-container">
+    <h3 class="text-center">Dashboard</h3>
+  
+    <div class="table-responsive"> <!-- Responsive wrapper -->
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Symbol</th>
+                    <th>Quantity</th>
+                    <th>Segment</th>
+                    <th>Strategy</th>
+                    <th>Trading</th>
+                </tr>
+            </thead>
+            <form method="post" >
+                {% csrf_token %}
+            <tbody>
+               
+                <tr>
+                        <td>1</td>
+                        <td>NIFTY</td>
+                        <td><input type="number" name="quantity_{{forloop.counter}}" value="{{s.QUANTITY}}"></td>
+                        <td>OPTION</td>
+                        <td>
+                            <select class="form-control custom-select" name="strategy_{{forloop.counter}}">
+                                <option style="color: #007bff;" value="{{s.Strategy}}">{{s.Strategy}}</option>
+                                <option value="NEUTRON1">NEUTRON1</option>
+                                <option value="SUB-ADMIN NAME">SUB-ADMIN NAME</option>
+                            </select>
+                        </td>
+                      
+                      
+                        <td>
+                            <label class="switch"><input type="checkbox" name="trading_{{forloop.counter}}" {% if s.trade == 'on' %} checked {% endif %}>
+                                <span class="slider round"></span>
+                            </label>
+                        </td>           
+                </tr>
+
+
+
+                <tr>
+                    <td>2</td>
+                    <td>BANKNIFTY</td>
+                    <td><input type="number" name="quantity_{{forloop.counter}}" value="{{s.QUANTITY}}"></td>
+                    <td>OPTION</td>
+                    <td>
+                        <select class="form-control custom-select" name="strategy_{{forloop.counter}}">
+                            <option style="color: #007bff;" value="{{s.Strategy}}">{{s.Strategy}}</option>
+                            <option value="NEUTRON1">NEUTRON1</option>
+                            <option value="SUB-ADMIN NAME">SUB-ADMIN NAME</option>
+                        </select>
+                    </td>
+                 
+                   
+                    <td>
+                        <label class="switch"><input type="checkbox" name="trading_{{forloop.counter}}" {% if s.trade == 'on' %} checked {% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+              
+            </tr>
+
+
+
+
+            <tr>
+                <td>3</td>
+                <td>FINNIFTY</td>
+                <td><input type="number" name="quantity_{{forloop.counter}}" value="{{s.QUANTITY}}"></td>
+                <td>OPTION</td>
+                <td>
+                    <select class="form-control custom-select" name="strategy_{{forloop.counter}}">
+                        <option style="color: #007bff;" value="{{s.Strategy}}">{{s.Strategy}}</option>
+                        <option value="NEUTRON1">NEUTRON1</option>
+                        <option value="SUB-ADMIN NAME">SUB-ADMIN NAME</option>
+                    </select>
+                </td>
+               
+               
+                <td>
+                    <label class="switch"><input type="checkbox" name="trading_{{forloop.counter}}" {% if s.trade == 'on' %} checked {% endif %}>
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+          
+            </tr>
+            
+
+            </tbody>
+        </table>
+    </div>
+    
+    <button class="btn btn-success" type="submit">Update</button>
+    </form>
+</div>
+{% if msg %}
+<script>
+  alert('{{ msg|escapejs }}');
+</script>
+{% endif %}
+{% endblock %} 
+

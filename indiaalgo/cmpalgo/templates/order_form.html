@@ -1,0 +1,18 @@
+<!-- order_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Place Order</title>
+</head>
+<body>
+    <h1>Place Order</h1>
+    <form method="POST" action="{% url 'place-order' %}">
+        {% csrf_token %}
+        <input type="hidden" name="signal_id" value="{{ signal.id }}">
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>
+

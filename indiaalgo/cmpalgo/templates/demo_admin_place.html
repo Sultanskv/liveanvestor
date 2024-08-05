@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order</title>
+</head>
+<body>
+    <h1>Place Order</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="symbol">Symbol:</label>
+        <select id="symbol" name="symbol" required>
+            {% for symbol in symbols %}
+                <option value="{{ symbol.symbol_token }}">{{ symbol.SYMBOL }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <label for="s_type">Transaction Type:</label>
+        <select id="s_type" name="s_type" required>
+            <option value="BUY">BUY</option>
+            <option value="SELL">SELL</option>
+        </select>
+        <br>
+
+        <label for="Order_type">Order Type:</label>
+        <select id="Order_type" name="Order_type" required>
+            <option value="LIMIT">LIMIT</option>
+            <option value="MARKET">MARKET</option>
+            <option value="STOPLOSS_LIMIT">STOPLOSS LIMIT</option>
+            <option value="STOPLOSS_MARKET">STOPLOSS MARKET</option>
+        </select>
+        <br>
+
+        <label for="segment_type">Segment Type:</label>
+        <select id="segment_type" name="segment_type" required>
+            <option value="cash">Cash</option>
+            <option value="options">Options</option>
+            <option value="futures">Futures</option>
+        </select>
+        <br>
+
+        <label for="squareoff">Square Off:</label>
+        <input type="number" id="squareoff" name="squareoff" step="0.01" required>
+        <br>
+
+        <label for="stoploss">Stop Loss:</label>
+        <input type="number" id="stoploss" name="stoploss" step="0.01" required>
+        <br>
+
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Order</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h2>Modify Order</h2>
+    <form id="modifyOrderForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="button" onclick="modifyOrder()">Modify Order</button>
+    </form>
+
+    <script>
+        function modifyOrder() {
+            var formData = new FormData(document.getElementById('modifyOrderForm'));
+
+            var data = JSON.stringify({
+                "variety": formData.get('variety'),
+                "orderid": formData.get('orderid'),
+                "ordertype": formData.get('ordertype'),
+                "producttype": formData.get('producttype'),
+                "duration": formData.get('duration'),
+                "price": formData.get('price'),
+                "quantity": formData.get('quantity'),
+                "tradingsymbol": formData.get('tradingsymbol'),
+                "symboltoken": formData.get('symboltoken'),
+                "exchange": formData.get('exchange')
+            });
+
+            var config = {
+                method: 'post',
+                url: 'https://apiconnect.angelbroking.com/rest/secure/angelbroking/order/v1/modifyOrder',
+                headers: { 
+                    'Authorization': 'Bearer AUTHORIZATION_TOKEN', 
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json', 
+                    'X-UserType': 'USER', 
+                    'X-SourceID': 'WEB', 
+                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP', 
+                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', 
+                    'X-MACAddress': 'MAC_ADDRESS', 
+                    'X-PrivateKey': 'API_KEY'
+                },
+                data: data
+            };
+
+            axios(config)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                alert("Order modified successfully!");
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert("Error modifying order. Check console for details.");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message Results</title>
+</head>
+<body>
+    <h1>Message Results</h1>
+    <ul>
+        {% for result in responses %}
+            <li>
+                Client: {{ result.client.clint_name_first }} {{ result.client.clint_name_last }} -
+                Status: {{ result.response.description }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

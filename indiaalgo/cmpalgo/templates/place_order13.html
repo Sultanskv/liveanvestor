@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Place Order</title>
+</head>
+<body>
+    <h1>Place Order</h1>
+    <form method="post" action="{% url 'place_order' %}">
+        {% csrf_token %}
+        <label for="order_type">Order Type:</label>
+        <select id="order_type" name="order_type">
+            <option value="limit">Limit</option>
+            <option value="market">Market</option>
+        </select><br>
+        <label for="ticker">Ticker:</label>
+        <input type="text" id="ticker" name="ticker"><br>
+        <label for="buy_sell">Buy/Sell:</label>
+        <select id="buy_sell" name="buy_sell">
+            <option value="BUY">Buy</option>
+            <option value="SELL">Sell</option>
+        </select><br>
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price"><br>
+        <label for="quantity">Quantity:</label>
+        <input type="text" id="quantity" name="quantity"><br>
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>

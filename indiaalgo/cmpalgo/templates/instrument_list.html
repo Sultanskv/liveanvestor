@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrument List</title>
+</head>
+<body>
+    <h1>Instrument List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Exchange Token</th>
+                <th>Trading Symbol</th>
+                <th>Name</th>
+                <th>Expiry</th>
+                <th>Strike</th>
+                <th>Tick Size</th>
+                <th>Lot Size</th>
+                <th>Instrument Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrument in instruments %}
+            <tr>
+                <td>{{ instrument.exchange_token }}</td>
+                <td>{{ instrument.tradingsymbol }}</td>
+                <td>{{ instrument.name }}</td>
+                <td>{{ instrument.expiry }}</td>
+                <td>{{ instrument.strike }}</td>
+                <td>{{ instrument.tick_size }}</td>
+                <td>{{ instrument.lot_size }}</td>
+                <td>{{ instrument.instrument_type }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

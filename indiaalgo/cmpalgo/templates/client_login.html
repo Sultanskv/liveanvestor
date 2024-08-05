@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  /* Base styles */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .login-container {
+    display: flex;
+    height: 100vh;
+  }
+
+  .left-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6); /* Black overlay */
+    color: #FFD700; /* Gold text color */
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 20px;
+    animation: fadeIn 2s ease-in-out;
+  }
+
+  .left-side h1 {
+    font-size: 3rem; /* Larger font size */
+    font-weight: bold;
+    background: linear-gradient(to right, #FFD700, #FFA500, #FF4500); /* Gradient text */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+  }
+
+  .left-side p {
+    font-size: 1.5rem; /* Smaller font size */
+    color: #FFFFFF; /* White color for the smaller text */
+  }
+
+  .right-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6); /* Black overlay */
+  }
+
+  .jumbotron {
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Gold shadow effect */
+    border-radius: 15px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: #000000; /* Dark grey background */
+    color: #d3d3d3; /* Light grey text color */
+    padding: 30px;
+    width: 80%; /* Adjusted width */
+    margin: 0 auto; /* Center within right-side */
+  }
+
+  .jumbotron:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    transform: scale(1.05);
+  }
+
+  .jumbotron img {
+    max-width: 300px; /* Increased max width */
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-control {
+    border-radius: 20px;
+    background-color: #222; /* Black background */
+    border: 1px solid #FFD700; /* Gold border */
+    color: #d3d3d3; /* Light grey text color */
+  }
+
+  .form-control::placeholder {
+    color: #d3d3d3;
+  }
+
+  .form-control:focus {
+    background-color: #020202; /* Black focus background */
+    border-color: #FFD700; /* Gold border on focus */
+    color: #d3d3d3;
+  }
+
+  .btn-primary {
+    background-color: #FFD700; /* Gold button */
+    border: none;
+    color: #333; /* Dark grey text color */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #FFA500; /* Darker gold on hover */
+    transform: scale(1.05);
+  }
+
+  .form-text {
+    color: #d3d3d3;
+  }
+
+  .alert {
+    background-color: #333; /* Dark grey background */
+    border: 1px solid #FFD700; /* Gold border */
+    color: #d3d3d3; /* Light grey text color */
+  }
+
+  .error-message {
+    color: #ff0000;
+  }
+
+  .h1, h1 {
+    font-size: 1.5rem;
+  }
+
+  .h3, h3 {
+    font-size: 1rem;
+  }
+
+  h1.display-6 {
+    font-size: 1.25rem; /* Reduced font size */
+  }
+
+  a {
+    color: #FFD700; /* Gold link color */
+  }
+
+  a:hover {
+    color: #FFA500; /* Darker gold on hover */
+  }
+
+  /* Video background */
+  #background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  
+  /* Keyframes for animation */
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+      overflow: auto;
+    }
+
+    .left-side, .right-side {
+      flex: none;
+      height: auto;
+      padding: 10px;
+    }
+
+    .jumbotron {
+      width: 90%;
+      margin-top: 20px;
+    }
+
+    .left-side h1 {
+      font-size: 2rem; /* Adjust font size */
+    }
+
+    .left-side p {
+      font-size: 1rem; /* Adjust font size */
+    }
+  }
+
+  @media (max-width: 576px) {
+    .jumbotron {
+      width: 95%;
+    }
+  }
+</style>
+
+<video id="background-video" autoplay loop muted>
+  <source src="{% static 'vid.mp4' %}" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<div class="login-container">
+  <div class="left-side">
+    <div>
+      <h1>Welcome To Anvestors.com</h1>
+      <p>Trading ka naya tarika</p>
+    </div>
+  </div>
+  <div class="right-side">
+    <div class="jumbotron">
+        <img src="{% static 'xyz.jpeg' %}" alt="Logo"> <!-- Add your logo path here -->
+        <h1 class="display-6">Login As Client!</h1>
+        {% if msg %}
+        <p style='color: red;'>{{ msg }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="user_id">EmailID</label>
+              <input type="email" name="email" class="form-control" placeholder="Enter emailid">
+              <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" name="password" class="form-control" placeholder="Enter password">
+            </div>
+            <button type="submit" class="btn btn-primary" style='width: 100%;'>Login</button>
+        </form>
+
+        <h3><a href="/changepassword/">Forgot Password</a></h3>
+    </div>
+  </div>
+</div>
+
+{% if error == "no" %}
+<script>
+  alert('Logged In Successfully');
+  window.location = ('{% url 'client_dashboard' %}');
+</script>
+{% endif %}
+{% if error == "yes" %}
+<script>
+  alert('Invalid Login Credentials, Try Again...');
+</script>
+{% endif %}
+
+{% endblock %}

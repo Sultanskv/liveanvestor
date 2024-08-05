@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Display Data</title>
+</head>
+<body>
+    <h1>Fetched Data</h1>
+    <table border="1" id="data-table">
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Token</th>
+            <!-- Aur bhi columns add kar sakte hain agar zarurat ho -->
+        </tr>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const url = 'https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json';
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('data-table');
+                    data.forEach(item => {
+                        const row = table.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        const cell3 = row.insertCell(2);
+                        cell1.innerHTML = item.symbol;
+                        cell2.innerHTML = item.name;
+                        cell3.innerHTML = item.token;
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+</body>
+</html>

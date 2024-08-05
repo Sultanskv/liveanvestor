@@ -1,0 +1,240 @@
+{% extends 'admin_base.html' %}
+
+{% block main %}
+
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F0F8FF;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+        .header {
+            background-color: #008080;
+            color: #FFFFFF;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .container {
+            padding: 15px;
+        }
+        .section-title {
+            color: #008080;
+            font-size: 16px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .input-group input, .input-group select, .input-group button {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #CCCCCC;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group button:focus {
+            border-color: #008080;
+            outline: none;
+        }
+        .input-group button {
+            background-color: #008080;
+            color: #FFFFFF;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .input-group button:hover {
+            background-color: #006666;
+        }
+        .input-group button.secondary {
+            background-color: #D3D3D3;
+            color: #00008B;
+        }
+        .input-group button.secondary:hover {
+            background-color: #B0C4DE;
+        }
+        .time-picker {
+            display: flex;
+            justify-content: space-between;
+        }
+        .time-picker input {
+            width: 48%;
+        }
+        @media (max-width: 600px) {
+            .input-group button.half-width {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .time-picker input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .time-picker {
+                flex-direction: column;
+            }
+        }
+    </style>
+     <!-- <script>
+        function filterSymbols() {
+            const segmentType = document.getElementById('segment_type').value;
+            const symbolSelect = document.getElementById('symbol');
+            symbolSelect.innerHTML = '<option value="" disabled selected>Select Symbol</option>'; // Reset options
+    
+            fetch(`/ind_admin/get-symbols?segment_type=${segmentType}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.symbol_token; // Use symbol_token as the value
+                        option.text = item.SYMBOL_order; // Display SYMBOL
+                        symbolSelect.appendChild(option);
+                    });
+                });
+        }
+    </script> -->
+
+    
+
+    <div class="header">Place Order All Client</div>
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+
+            
+            <div class="section-title">Select Stock</div>
+            <div class="input-group">
+                <select name="stock" >
+                    <option value="" disabled selected>Select Stock</option>
+                    <!-- Add stock options here -->
+                </select>
+            </div>
+
+            <div class="section-title">Select Symbol Name</div>
+<div class="input-group">
+    <select name="symbolss" id="symbolss" required>
+        <option value="" disabled selected>Select Symbol</option>
+        <!-- <option value="BANKNIFTY">BANKNIFTY</option>
+        <option value="NIFTY">NIFTY</option>
+        <option value="FINNIFTY">FINNIFTY</option> -->
+        {% for ss in symbols %}
+        <option value="{{ss}}">{{ss}}</option>
+        {% endfor %}
+     </select>
+</div>
+
+<div class="section-title">Segment Type</div>
+<div class="input-group">
+    <select name="segment_type" id="segment_type" required onchange="filterSymbols()">
+        <option value="" disabled selected>Select Segment Type</option>
+        <option value="cash">cash</option>
+        <option value="futures">futures</option>
+        <option value="options">options</option>
+        
+    </select>
+</div>
+
+<script>
+    function filterSymbols() {
+        const segmentType = document.getElementById('segment_type').value;
+        const selectedSymbol = document.getElementById('symbolss').value;
+        const symbolSelect = document.getElementById('symbol');
+
+        if (segmentType && selectedSymbol) {
+            fetch(`/get-symbols?segment_type=${segmentType}&symbol=${selectedSymbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    symbolSelect.innerHTML = '<option value="" disabled selected>Select Symbol</option>'; // Reset options
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.symbol_token; // Use symbol_token as the value
+                        option.text = item.SYMBOL_order; // Display SYMBOL
+                        symbolSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching symbols:', error));
+        }
+    }
+</script>
+
+
+        
+            <div class="section-title">Select Symbol</div>
+            <div class="input-group">
+                <select name="symbol" id="symbol" onchange="fetchSymbolPrice()" required>
+                    <option value="" disabled selected>Select Symbol</option>
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+
+            
+            <script>
+                function fetchSymbolPrice() {
+                    const symbolSelect = document.getElementById('symbol');
+                    const symbol_token = symbolSelect.value;
+                    
+                    if (symbol_token) {
+                        fetch(`/get-symbol-price?symbol_token=${symbol_token}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const symbolPriceElement = document.getElementById('symbol_price');
+                                symbolPriceElement.textContent = `Price: ${data.price}`; // Assuming price is returned in data
+                            })
+                            .catch(error => console.error('Error fetching symbol price:', error));
+                    }
+                }
+            </script>
+
+            
+            <div class="input-group">
+                <p name="symbol_price" id="symbol_price" style="color: #00008B;">Symbol Price : </p>
+            </div>
+
+            <div class="section-title">Transaction Type</div>
+            <div class="input-group">
+                <select name="s_type" id="type" required>
+                    <option value="" disabled selected>Select Option</option>  
+                    <option value="BUY">BUY</option>
+                    <option value="SELL">SELL</option>
+                </select>
+            </div>
+            
+          
+            <div class="section-title">Order Type</div>
+            <div class="input-group">
+                <select name="Order_type" required>
+                    <option value="" disabled selected>Select Order Type</option>
+                    <option value="MARKET">MARKET</option>
+                    <option value="LIMIT">LIMIT</option>
+                    <option value="STOPLOSS_LIMIT">STOPLOSS_LIMIT</option>
+                    <option value="STOPLOSS_MARKET">STOPLOSS_MARKET</option>
+                </select>
+            </div>
+            <div class="section-title">Square-Off Price</div>
+            <div class="input-group">
+                <input type="number" name="squareoff" id="squareoff" placeholder="Enter square-off price" required>
+            </div>
+            <div class="section-title">Stop-Loss Price</div>
+            <div class="input-group">
+                <input type="number" name="stoploss" id="stoploss" placeholder="Enter stop-loss price" required>
+            </div>
+            <div class="input-group">
+                <button type="submit">START</button>
+            </div>
+        </form>  
+    </div>
+
+
+{% endblock %}

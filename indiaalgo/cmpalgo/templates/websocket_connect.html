@@ -1,0 +1,44 @@
+<!-- myapp/templates/websocket_connect.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Connect</title>
+</head>
+<body>
+    <h1>WebSocket Connect</h1>
+    <form id="connectForm">
+        <label for="feed_token">Feed Token:</label>
+        <input type="text" id="feed_token" name="feed_token" required><br><br>
+        <label for="client_code">Client Code:</label>
+        <input type="text" id="client_code" name="client_code" required><br><br>
+        <button type="submit">Connect</button>
+    </form>
+
+    <script>
+        document.getElementById('connectForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const feed_token = document.getElementById('feed_token').value;
+            const client_code = document.getElementById('client_code').value;
+
+            fetch('/api/connect/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ feed_token, client_code }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('WebSocket connection initiated');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

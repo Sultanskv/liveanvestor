@@ -1,0 +1,310 @@
+{% extends 'admin_base.html' %}
+
+{% block main %}
+
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7f6;
+      padding: 20px;
+  }
+  .card-shadow {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+  }
+  .card-body h5 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+  }
+  .form-group {
+      margin-bottom: 20px;
+  }
+  label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+  }
+  input[type="text"], input[type="email"], input[type="tel"], input[type="datetime-local"], input[type="password"], select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+  }
+  input[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 100%;
+      transition: background-color 0.3s;
+  }
+  input[type="submit"]:hover {
+      background-color: #0056b3;
+  }
+  .alert {
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 20px;
+      color: white;
+      border-radius: 5px;
+  }
+  .alert-danger {
+      background-color: #f44336;
+  }
+  .hidden {
+      display: none;
+  }
+</style>
+<script>
+  function checkpassword()
+  {
+   if(document.signup.pwd.value!=document.signup.cpwd.value)
+   {
+    alert('Password and Repeat Password field does not match');
+    document.signup.cpwd.focus();
+    return false;
+   }
+   return true;
+  }
+
+
+
+  function showBrokerOptions(accountType) {
+    const brokerDiv = document.getElementById('broker-options');
+    const apiKeyDiv = document.getElementById('api-key-input');
+    const brokerSelect = document.getElementById('broker-select');
+    const apiKeyInput = document.getElementById('api-key');
+
+    if (accountType === 'Live') {
+      brokerDiv.style.display = 'block';
+      brokerSelect.value = 'Angel';  // Default to Angel
+      apiKeyDiv.style.display = 'block';  // Show API key input when Live is selected
+    } else {
+      brokerDiv.style.display = 'none';
+      apiKeyDiv.style.display = 'none';
+      brokerSelect.value = '';
+      apiKeyInput.value = '';
+    }
+  }
+</script>  
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#options').change(function() {
+            if ($(this).val() !== 'Select Broker') {
+                $('#api-key-input').show();
+            } else {
+                $('#api-key-input').hide();
+            }
+        });
+    });
+</script>
+
+
+
+<div class="card-shodow m-5">
+   <div class ="card=body">
+      <h5 class="p-2" style="border-bottom : 2px solid orange">Create an Account</h5>
+      {% if msg %}
+      <h4 style="color: red;text-align:center;">{{ msg }}</h4>
+      {% endif %}  
+
+      <div class = "container-fluid">
+        <form method="post" name="signup" >
+          {%csrf_token %}
+          <div class="form-row">
+            {% comment %} <div class="col-sm-6">
+             <div class="form-group">
+                <label>client</label>
+                <input type="text" name="client" class="form-control" required placeholder="Enter clientname">
+             </div>
+            </div>  {% endcomment %}
+
+            <div class="col-md-6">
+              <div class="form-group">
+                 <label>first name</label>
+                 <input type="text" name="fname" class="form-control" required placeholder="Enter firstname">
+              </div>
+             </div>
+
+             <div class="col-md-6">
+              <div class="form-group">
+                 <label>last name</label>
+                 <input type="text" name="lname" class="form-control" required placeholder="Enter last name">
+              </div>
+             </div>
+
+             <div class="col-md-6">
+              <div class="form-group">
+                 <label>Phone number</label>
+                 <input type="Phone" name="mobile" class="form-control" required placeholder="Enter mobile no">
+              </div>
+             </div>
+
+             <div class="col-sm-6">
+              <div class="form-group">
+                 <label>EmailID</label>
+                 <input type="email" name="email" class="form-control" required placeholder="Enter email">
+              </div>
+             </div>
+
+             <div class="col-sm md lg xl xxl-6">
+              <div class="form-group">
+                <label for="fromdate">From Date:</label>
+                <input type="datetime-local" id="fromdate" name="fromdate" required class="form-control">
+              </div>
+             </div>
+
+             
+             <div class="col-md-6">
+              <div class="form-group">
+                <label for="todate">To Date:</label>
+                <input type="datetime-local" id="todate" name="todate" required class="form-control">
+              </div>
+             </div>
+
+             <div class="col-md-6">
+              <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" id="pwd" name="pwd" required class="form-control" placeholder="Enter password">
+              </div>
+             </div>
+
+             <div class="col-md-6">
+              <div class="form-group">
+                <label for="cpwd">Confirm Password:</label>
+                <input type="password" id="cpwd" name="cpwd" required class="form-control" placeholder="Enter password again" >
+              </div>
+             </div>
+             
+             <div class="col-md-6">  
+              <div class="form-group">
+                  <label for="options">Select a Broker:</label>
+                  <select id="options" name="Broker" class="form-control">
+                      <option>Select Broker</option>
+                      {% for b in brokers %}
+                      <option value="{{b.broker_name}}">
+                          {{b.broker_name}}
+                      </option>
+                      {% endfor %}  
+                  </select>
+              </div>
+          </div>
+          
+          <div class="col-md-6" id="api-key-input" style="display:none;">
+              <div class="form-group">
+                  <label for="api-key">API Key</label>
+                  <input type="text" class="form-control" name="api_key" id="api-key" placeholder="Enter API Key">
+              </div>
+          </div>
+          
+
+          
+          
+           <div class="col-md-6">  
+            <div class="form-group">
+              <label for="options">Select an Broker:</label>
+              <select class="form-control" name="Acount_type" id="type" >
+                <option value="Demo">Demo</option>
+                <option value="Live">Live</option>
+              </select>
+            </div>
+          </div>
+
+
+          <div class="col-md-6">
+            <div class="form-group">
+                <label for="group">Group</label>
+                <select class="form-control" name="group" id="group" required onchange="fetchSymbols(this.value)">
+                    <option value="">Select an option</option>
+                    {% for group in groups %}
+                        <option value="{{ group.id }}">{{ group.GROUP }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="form-group" id="symbol-container">
+                    <!-- Symbols will be dynamically populated here -->
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            function fetchSymbols(group_id) {
+                if (group_id) {
+                    fetch(`/get-symbols/${group_id}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const symbolContainer = document.getElementById('symbol-container');
+                            symbolContainer.innerHTML = ''; // Clear current symbols
+                            data.symbols.forEach(symbol => {
+                                const symbolDiv = document.createElement('div');
+                                symbolDiv.className = 'grid-item';
+                                symbolDiv.textContent = symbol.name;
+                                symbolContainer.appendChild(symbolDiv);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching symbols:', error));
+                }
+            }
+        </script>
+          </div>
+
+
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="strategy-select">Select Strategy:</label>
+              <select id="strategy-select" name="strategies" class="form-control">
+                <option value="">Select a Strategy</option>
+                {% for strategy in strategies %}
+                  <option value="{{ strategy.id }}">{{ strategy.Strategy }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          
+          
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <div class="form-group" id="symbol-container">
+                <!-- Symbols will be dynamically populated here -->
+              </div>
+            </div>
+          </div>
+          <br>
+          <input type="submit" value="submit" onsubmit="return checkpassword()" class=" m-2 px-3 btn btn-primary">
+        </form>
+      </div>
+   </div>
+</div>
+
+{% if error == "no" %}
+<script>
+  alert('Registrations Successful');
+  window.location = ('{% url '/' %}'); 
+</script>
+{% endif %}
+{% if error == "yes" %}
+<script>
+  alert('Something went wrong , Try Again...');
+</script> 
+
+{% endif %}
+
+{% endblock %}

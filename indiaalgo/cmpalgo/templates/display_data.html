@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Display Data</title>
+</head>
+<body>
+    <h1>Fetched Data</h1>
+    <table border="1">
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Token</th>
+            <th>Expiry</th>
+            <th>Strike</th>
+            <th>Lot Size</th>
+            <th>Instrument Type</th>
+            <th>Tick Size</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.tradingsymbol }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.exchange_token }}</td>
+            <td>{{ item.expiry }}</td>
+            <td>{{ item.strike }}</td>
+            <td>{{ item.lot_size }}</td>
+            <td>{{ item.instrument_type }}</td>
+            <td>{{ item.tick_size }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
